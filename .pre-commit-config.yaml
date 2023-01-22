@@ -17,11 +17,11 @@ repos:
                 ^terraform/default/us-east-1/eks
               )
           - id: terraform_docs_replace
-          # - id: infracost_breakdown
-          #   args:
-          #     - --args=--path=./modules/vpc
-          #     - --hooks-config=".totalHoursCost|tonumber > 0.01"
-          #     - --hooks-config='.totalMounthlyCost|tonumber >= 1'
+          - id: infracost_breakdown
+            args:
+              - --args=--path=./terraform/default/us-east-1/vpc
+              - --hook-config=".totalHoursCost|tonumber > 0.01"
+              - --hook-config='.totalMounthlyCost|tonumber >= 1'
 
     - repo: https://github.com/pre-commit/pre-commit-hooks
       rev: v4.1.0
