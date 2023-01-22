@@ -46,3 +46,6 @@ echo "installing terragrunt for $KERNEL_NAME $ARCH"
 wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.43.0/terragrunt_${KERNEL_NAME}_${ARCH}
 mv terragrunt_${KERNEL_NAME}_${ARCH} /usr/local/bin/terragrunt
 chmod +x /usr/local/bin/terragrunt
+
+echo "install infracost"
+curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh

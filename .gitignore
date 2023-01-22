@@ -6,6 +6,9 @@
 .terragrunt-cache
 **/.terragrunt-cache/*
 
+**/.infracost/*
+.infracost
+
 # backend configuration
 backend.tf
 

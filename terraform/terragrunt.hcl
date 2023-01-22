@@ -1,13 +1,13 @@
-terraform {
-  before_hook "linter" {
+/* terraform {
+  before_hook "infracost" {
     commands = [
       "apply",
       "plan",
     ]
-    execute = ["terraform", "validate"]
+    execute = ["infracost", "breakdown", "--config-file infracost.yaml"]
     run_on_error = false
   }
-}
+} */
 
 remote_state {
   backend = "s3"
