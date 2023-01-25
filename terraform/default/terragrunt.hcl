@@ -1,13 +1,12 @@
-/* terraform {
-  before_hook "infracost" {
+terraform {
+  before_hook "run_infracost" {
     commands = [
       "apply",
-      "plan",
+      "plan "
     ]
-    execute = ["infracost", "breakdown", "--config-file infracost.yaml"]
-    run_on_error = false
+    execute = ["infracost", "breakdown", "--path", "."]
   }
-} */
+}
 
 remote_state {
   backend = "s3"

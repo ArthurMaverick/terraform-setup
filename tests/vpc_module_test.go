@@ -9,7 +9,7 @@ import (
 func TestVpcModule(t *testing.T) {
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../modules/vpc",
-		VarFiles:     []string{"/home/arthur/Documents/terraform/project/default.tfvars"},
+		VarFiles:     []string{"../terraform/default/us-east-1/vpc/vpc.tfvars"},
 	}
 	defer terraform.Destroy(t, terraformOptions)
 	terraform.InitAndApply(t, terraformOptions)

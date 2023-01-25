@@ -1,0 +1,30 @@
+---
+- name: Terraform Functions
+  hosts: localhost
+  become: yes
+  become_method: sudo
+  vars_files: ../../.env-config.yaml
+
+  tasks:
+    - name: Generate terraform tfplanJson
+      ansible.builtin.shell: |
+        TF_PATH=../../{{ tf_root }}/{{ tf_env }}/{{ tf_region }}/{{ tf_module }}
+        cd $TF_PATH
+
+        terragrunt run-all --terragrunt-ignore-external-dependencies plan -out tfplan.txt
+
+        plans=($(find . -name tfplan.txt))
+
+        planjsons=()
+        for plan in "${plans[@]}"; do
+          dir=$(dirname $plan)
+          dir=$(echo "$dir" | sed 's/\(.*\)\/\.terragrunt-cache\/.*/\1/')
+
+          echo "Running terragrunt show for $(basename $plan) for $dir"
+          terragrunt show -json $(basename $plan) --terragrunt-working-dir=$dir --terragrunt-no-auto-init > $dir/plan.json
+          planjsons=(${planjsons[@]} "$dir/plan.json")
+        done
+
+        IFS=$'\n' planjsons=($(sort <<<"${planjsons[*]}"))
+      args:
+        executable: /bin/bash

@@ -14,12 +14,12 @@ terraform {
     ]
 
     arguments = [
-      "-var-file=${get_terragrunt_dir()}/default.tfvars",
+      "-var-file=${get_terragrunt_dir()}/vpc.tfvars",
       /* "-var-file=${get_terragrunt_dir()}/${path_relative_from_include()}/default.tfvars", */
     ]
   }
 }
 
-include "root" {
+/* include "root" {
   path = find_in_parent_folders()
-}
+} */
