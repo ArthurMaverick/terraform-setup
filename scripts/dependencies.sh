@@ -37,12 +37,6 @@ chmod +x terraform-docs
 mv terraform-docs /usr/local/bin/terraform-docs
 rm -rf terraform-docs.tar.gz LICENSE README.md
 
-echo "install terraform terrascan"
-curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Darwin_x86_64.tar.gz")" > terrascan.tar.gz
-tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
-install terrascan /usr/local/bin && rm terrascan
-echo alias 'terrascan="`pwd`/terrascan"' >> ~/.zshrc
-
 echo "install terraform tfsec"
 curl -sSLo ./tfsec tfsec-checkgen-linux-amd64 https://github.com/aquasecurity/tfsec/releases/download/v1.28.1/tfsec-checkgen-$KERNEL_NAME-$ARCH
 chmod +x tfsec
