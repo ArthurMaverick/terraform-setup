@@ -1,10 +1,9 @@
 terraform {
-  before_hook "run_infracost" {
+  before_hook "cleaner" {
     commands = [
-      "apply",
-      "plan "
+      "init",
     ]
-    execute = ["infracost", "breakdown", "--path", "."]
+    execute = ["rm", "-rf", ".terraform"]
   }
 }
 
