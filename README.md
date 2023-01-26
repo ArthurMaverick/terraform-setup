@@ -1,5 +1,6 @@
 # Terraform Denpendencies
   - pre-commit
+  - tfsec
   - tflint
   - terragrunt
   - terraform-docs
