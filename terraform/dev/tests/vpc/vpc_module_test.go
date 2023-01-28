@@ -15,7 +15,7 @@ type Test struct {
 func TestVpcModule(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
-		TerraformDir: "../../us-east-1/vpc/",
+		TerraformDir: "../../us-east-2/vpc/",
 		VarFiles:     []string{"vpc.tfvars"},
 	}
 
