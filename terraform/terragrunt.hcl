@@ -1,5 +1,3 @@
-/* !https://github.com/gruntwork-io/terragrunt-infrastructure-live-example */
-
 # ---------------------------------------------------------------------------------------------------------------------
 # TERRAGRUNT CONFIGURATION
 # Terragrunt is a thin wrapper for Terraform that provides extra tools for working with multiple Terraform modules,
@@ -17,6 +15,13 @@ locals {
 }
 
 terraform {
+  extra_arguments "retry_lock" {
+   commands = get_terraform_commands_that_need_locking()
+   arguments = [
+     "-lock-timeout=20m"
+   ]
+  }
+
   before_hook "cleaner" {
     commands = [
       "init",

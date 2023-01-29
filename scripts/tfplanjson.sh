@@ -1,7 +1,6 @@
 # Path to Terraform code
-TF_ROOT=$1
-TF_PATH=terraform/$TF_ROOT/us-east-1/vpc
-# cd $TF_ROOT
+ENV=$1
+TF_PATH=terraform/$ENV
 cd $TF_PATH
 
 # Generate plan JSON files for all Terragrunt modules and add them to an Infracost config file

@@ -12,21 +12,18 @@ pre-commit_install:
 #############
 plan:
 	cd terraform/${ENV} && terragrunt run-all plan
-plantest:
-	cd terraform/${ENV} && terragrunt run-all plan -out tfplan.txt
-tfplanjson_module:
-	sudo ansible-playbook -i "localhost," -c local ansible/books/terraform-tfplanjson.yaml -e "tf_module=$(module)" -v
-tfplan:
-	cd terraform && \
-	terragrunt run-all plan -out tfplan.bin
-
+apply:
+	cd terraform/${ENV} && terragrunt run-all apply
+destroy:
+	cd terraform/${ENV} && terragrunt run-all destroy
+planfile_json:
+	bash scripts/tfplanjson.sh ${ENV}
 
 #############
 # INFRACOST #
 #############
 infracostauth:
 	infracost auth login
-
 infracost:
-	bash ansible/scripts/infracost.sh $(tfmodule)
+	bash scripts/infracost.sh terraform/${ENV}
 # need authentication
