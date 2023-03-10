@@ -1,0 +1,93 @@
+version: 0.2
+
+env:
+  shell: bash
+  parameter-store:
+    GITHUB_TOKEN: /GITHUB/TOKEN
+    PRIVATE_KEY_BUCKET: /S3/BUCKET/PRIVATE_KEY
+    AWS_ACCESS_KEY_ID: /DEV/CODEBUILD/AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: /DEV/CODEBUILD/AWS_SECRET_ACCESS_KEY
+
+phases:
+  install:
+    on-failure: ABORT
+    runtime-versions:
+      python: 3.9
+      golang: 1.18
+    commands:
+
+      # CLONE INFRASTRUCTURE...
+      - git clone https://${GITHUB_TOKEN}@github.com/bluearchio/Infrastructure.git
+
+      # INSTALL BLUEARCHIO...
+      - cd Infrastructure/cli
+      - go build -o bluearchio
+      - chmod +x bluearchio
+      - mv bluearchio /usr/local/bin/
+      - cd ..
+
+      # CHECK IF REPO IS UP TO DATE... TODO: RETURN EXIT 1 IF NOT
+      - export STATUS=$(bluearchio validate -r $CODEBUILD_SRC_DIR -c $CODEBUILD_RESOLVED_SOURCE_VERSION -e $STAGE)
+      - echo $STATUS
+      - if [[ $STATUS == "NOT CHANGED" ]]; then aws codebuild stop-build --id $CODEBUILD_BUILD_ID; fi
+
+      # INSTALL ANSIBLE
+      - pip3 install ansible
+
+    finally:
+      - echo "All necessary tools are installed"
+  pre_build:
+    commands:
+      - echo Checking all necessary tools and files...
+      - go version
+      - make --version
+      - bluearchio -v
+      - aws --version
+      - git --version
+      - ansible-playbook --version
+    finally:
+      - echo "All necessary tools and files are installed"
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR
+      - cd Infrastructure
+
+      # SCALING UP EC2 INSTANCE
+      - bluearchio ec2-asg --autoscaling 1
+
+      # EXPORT REPOSITORY NAME
+      - export REPOSITORY=$(bluearchio get-repository-name -r $CODEBUILD_SRC_DIR)
+
+      # GET PRIVATE KEY FROM S3
+      - bluearchio s3-getobject -b ${PRIVATE_KEY_BUCKET} -o ami-builder.pem
+      - chmod 400 ami-builder.pem
+
+      # WAIT FOR EC2 INSTANCE TO BE READY
+      - bluearchio ec2-wait-and-get-instance-id
+
+      # GET INSTANCE IP
+      - export INSTANCE_IP=$(bluearchio ec2-wait-and-get-instance-id)
+
+      # INSTALLING PACKAGES IN EC2 INSTANCE
+      - echo $INSTANCE_IP | tail -1 >> ansible/hosts/hosts.txt
+      - cat ansible/hosts/hosts.txt
+      - ansible-playbook ansible/books/ami-builder.yaml -i ansible/hosts/hosts.txt -u ec2-user --private-key ami-builder.pem -e "gh_token=${GITHUB_TOKEN}" -e "project=${REPOSITORY}" --ssh-extra-args="-o StrictHostKeyChecking=no" -vv
+
+      # CREATE AMI FROM EC2 INSTANCE
+      - bluearchio ec2-ami-create -r ${REPOSITORY}
+
+      # UPDATE AMI IN MARKETPLACE
+      # - bluearch marketplace -m update --ami $AMI_ID...
+      # - bluearch marketplace -m update --ami ami-0b1b2b3b4b5b6b7b8
+      # - bluearch marketplace -m update --ami ...
+      - sleep 250
+
+      # SCALING DOWN EC2 INSTANCE
+      - bluearchio ec2-asg --autoscaling 0
+
+    finally:
+      - bluearchio ec2-asg --autoscaling 0
+      - echo "AMI has been published in the marketplace"
+  post_build:
+    commands:
+      - echo Build Finished on `date`

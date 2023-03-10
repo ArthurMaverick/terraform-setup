@@ -7,17 +7,42 @@ pre-commit_install:
 	pre-commit install
 
 
-#############
-# TERRAFORM #
-#############
+################
+# TERRAFORM CLI
+################
+
+# --------------
+# plan commands
+# --------------
 plan:
-	cd terraform/${ENV} && terragrunt run-all plan
-apply:
-	cd terraform/${ENV} && terragrunt run-all apply
-destroy:
-	cd terraform/${ENV} && terragrunt run-all destroy
+	cd terraform/${STAGE} && terragrunt run-all plan
+plan_module:
+	terragrunt plan --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module)
+
 planfile_json:
-	bash scripts/tfplanjson.sh ${ENV}
+	bash scripts/tfplanjson.sh ${STAGE}
+
+# --------------
+# apply commands
+# --------------
+apply:
+	cd terraform/${STAGE} && terragrunt run-all apply
+apply_module:
+	terragrunt apply --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module) -auto-approve
+
+# ----------------
+# destroy commands
+# ----------------
+destroy:
+	cd terraform/${STAGE} && terragrunt run-all destroy
+destroy_module:
+	terragrunt destroy --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module)
+
+# --------------
+# state commands
+# --------------
+state_list:
+	terragrunt state list --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module)
 
 #############
 # INFRACOST #
@@ -25,5 +50,5 @@ planfile_json:
 infracostauth:
 	infracost auth login
 infracost:
-	bash scripts/infracost.sh terraform/${ENV}
+	bash scripts/infracost.sh terraform/${STAGE}
 # need authentication

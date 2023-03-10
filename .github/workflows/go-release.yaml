@@ -1,0 +1,50 @@
+
+
+name: goreleaser
+
+on:
+  push:
+    # run only against tags
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  # packages: write
+  # issues: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - run: git fetch --force --tags
+
+      - name: Fetch tags
+        run: ls -la
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.18.0'
+          cache: true
+          cache-dependency-path: cli/go.sum
+          go-version-file: cli/go.mod
+      # More assembly might be required: Docker logins, GPG, etc. It all depends
+      # on your needs.
+      - uses: goreleaser/goreleaser-action@v4
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+          workdir: cli
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}

@@ -1,0 +1,20 @@
+{
+"Statement": [
+  {
+    "Action": [
+      "codebuild:*",
+      "codestar-connections:*",
+      "logs:*",
+      "ecr:*",
+      "s3:*",
+      "ec2:*",
+      "ssm:*"
+    ],
+    "Effect": "Allow",
+    "Resource": [
+      "*"
+    ]
+  }
+],
+"Version": "2012-10-17"
+}
