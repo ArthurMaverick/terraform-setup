@@ -22,7 +22,6 @@ fi
 if [ $ARCH == "i686" ]; then
     ARCH="386"
 fi
-https://github.com/gruntwork-io/terragrunt/releases/download/v0.43.0/terragrunt_linux_amd64
 
 echo "Installing dependencies..."
 

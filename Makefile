@@ -15,7 +15,7 @@ pre-commit_install:
 # plan commands
 # --------------
 plan:
-	cd terraform/${STAGE} && terragrunt run-all plan
+	cd terragrunt/${STAGE} && terragrunt run-all plan
 plan_module:
 	terragrunt plan --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module)
 
@@ -26,7 +26,7 @@ planfile_json:
 # apply commands
 # --------------
 apply:
-	cd terraform/${STAGE} && terragrunt run-all apply
+	cd terragrunt/${STAGE} && terragrunt run-all apply
 apply_module:
 	terragrunt apply --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module) -auto-approve
 
@@ -34,7 +34,7 @@ apply_module:
 # destroy commands
 # ----------------
 destroy:
-	cd terraform/${STAGE} && terragrunt run-all destroy
+	cd terragrunt/${STAGE} && terragrunt run-all destroy
 destroy_module:
 	terragrunt destroy --terragrunt-working-dir=terraform/${STAGE}/${AWS_REGION}/$(module)
 
