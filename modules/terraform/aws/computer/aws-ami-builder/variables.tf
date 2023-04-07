@@ -12,5 +12,5 @@ variable "ami_builder" {
     region  = string
     ami_tag = string
   }))
-  description = "values for aws_imagebuilder_image"
+  description = "values for aws_imagebuilder_image."
 }
