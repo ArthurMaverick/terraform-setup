@@ -2,7 +2,7 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-/* locals {
+locals {
   env_vars       = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   region_vars    = read_terragrunt_config(find_in_parent_folders("region.hcl"))
   env            = local.env_vars.locals.environment
@@ -10,7 +10,7 @@ include "root" {
   region         = local.region_vars.locals.aws_region
   projects       = local.env_vars.locals.projects
   repositories   = local.env_vars.locals.repositories
-} */
+}
 
 terraform {
   source = "${get_repo_root()}/modules/k8s/kind///"
@@ -31,6 +31,8 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
   stage = "dev"
+  region = "us-east-2"
+  aws_account_id = "123456789012"
 }
 
 /* provider "kind" {} */

@@ -1,0 +1,12 @@
+apiVersion: aws.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: {{ .Values.providerConfig.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: {{ .Release.Namespace }}
+      name: {{ .Values.secret.name }}
+      key: {{ .Values.secret.key }}
